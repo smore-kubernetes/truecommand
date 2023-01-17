@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: truecommand
+  name: truecommand
+spec:
+  selector:
+    matchLabels:
+      app: truecommand
+  template:
+    metadata:
+      labels:
+        app: truecommand
+    spec:
+      nodeName: k3os-6802
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+        - name: truecommand
+          image: ixsystems/truecommand
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http-tcmd
+              protocol: TCP
+            - containerPort: 443
+              name: https-tcmd
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data
+              name: truecommand-pv
+      volumes:
+        - name: truecommand-pv
+          persistentVolumeClaim:
+            claimName: truecommand-pvc
